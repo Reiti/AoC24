@@ -1,11 +1,11 @@
 import util.Day
+import util.Util._
 
 object Day5 extends Day(5):
   override def solve(): Unit =
-    val split = input.split("\n\n")
-    val orderingRules = split.head.split("\n")
-    val updates = split(1).split("\n").map(u => u.split(","))
-    val orderMap = orderingRules.map(o => o.split("\\|")).groupBy(_.head).view.mapValues(_.map(_(1)).toSet).toMap.withDefaultValue(Set())
+    val (ord, upd) = input.split("\n\n").map(_.split("\n")).asTuple
+    val orderMap = ord.map(o => o.split("\\|")).groupBy(_.head).view.mapValues(_.map(_(1)).toSet).toMap.withDefaultValue(Set())
+    val updates = upd.map(u => u.split(","))
 
     given Ordering[String] with
       def compare(x: String, y: String): Int = if orderMap(y).contains(x) then 1 else -1
