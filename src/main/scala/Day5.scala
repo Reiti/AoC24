@@ -1,9 +1,8 @@
 import util.Day
-import util.Util._
 
 object Day5 extends Day(5):
   override def solve(): Unit =
-    val (ord, upd) = input.split("\n\n").map(_.split("\n")).asTuple
+    val Array(ord, upd) = input.split("\n\n").map(_.split("\n"))
     val orderMap = ord.map(o => o.split("\\|")).groupBy(_.head).view.mapValues(_.map(_(1)).toSet).toMap.withDefaultValue(Set())
     val updates = upd.map(u => u.split(","))
 

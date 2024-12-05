@@ -147,7 +147,4 @@ object Util {
       j <- lines.head.indices
     } yield (i, j) -> lines(i)(j)).toMap.withDefaultValue('.')
   }
-
-  extension[A] (s: Seq[A])
-    def asTuple: (A, A) = if s.length == 2 then (s.head, s(1)) else throw new UnsupportedOperationException()
 }
