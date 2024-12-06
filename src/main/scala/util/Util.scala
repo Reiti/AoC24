@@ -26,16 +26,17 @@ object Util {
 
   def loadDayLines(day: Int): List[String] = loadDay(day).split("\n").toList
 
-  def loadDayInts(day: Int): List[Int] = loadDayLines(day).map(_.toInt)
-
-  def loadDayProgram(day: Int): Map[Int, (String, Int)] =
-    Util.loadDayLines(day)
-      .map {l =>
-        val split = l.split(" ")
-        (split(0), split(1).toInt)
-      }
-      .zipWithIndex
-      .map { x => (x._2, x._1) }.toMap
+//  object Dir:
+//    def UP: (Int, Int) = (0, -1)
+//    def DOWN: (Int, Int) = Dir((0, 1)
+//    def LEFT: (Int, Int) = Dir((-1, 0)
+//    def RIGHT: (Int, Int) = Dir((1, 0)
+//
+//    def clockwise: Dir =
+//      Dir.((-d._2, d._1))
+//
+//    def x: Int = d._1
+//    def y: Int = d._2
 
   @tailrec
   def gcd(a: Long, b: Long): Long = {
