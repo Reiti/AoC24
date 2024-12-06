@@ -28,13 +28,6 @@ object Util {
 
   def loadDayInts(day: Int): List[Int] = loadDayLines(day).map(_.toInt)
 
-  def loadDayMap(day: Int): Map[(Int, Int), Char] = {
-    val lines = loadDayLines(day)
-    lines.indices.flatMap(col => lines.head.indices.map(row => {
-      (col, row) -> lines(col)(row)
-    })).toMap
-  }
-
   def loadDayProgram(day: Int): Map[Int, (String, Int)] =
     Util.loadDayLines(day)
       .map {l =>
