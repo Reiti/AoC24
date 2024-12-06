@@ -141,4 +141,20 @@ object Util {
       j <- lines.head.indices
     } yield (i, j) -> lines(i)(j)).toMap.withDefaultValue('.')
   }
+
+  type Pos = (Int, Int)
+
+  extension (c: Pos)
+    def +(o: Dir): Pos = (c._1 + o.x, c._2 + o.y)
+    def x: Int = c._1
+    def y: Int = c._2
+
+  final case class Dir private(x: Int, y: Int):
+    def clockwise: Dir = Dir(-y, x)
+
+  object Dir:
+    final val UP: Dir = Dir(0, -1)
+    final val DOWN: Dir = Dir(0, 1)
+    final val LEFT: Dir = Dir(-1, 0)
+    final val RIGHT: Dir = Dir(1, 0)
 }
