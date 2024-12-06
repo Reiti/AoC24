@@ -125,20 +125,31 @@ object Util {
     override def apply(key: I): O = getOrElseUpdate(key, f(key))
   }
 
-  val vonNeumannNeighborhood: Seq[(Int, Int)] = Seq((-1, 0), (1, 0), (0, -1), (0, 1))
-  val mooreNeighborhood: Seq[(Int, Int)] = vonNeumannNeighborhood ++ Seq((-1, -1), (-1, 1), (1, -1), (1, 1))
+  val vonNeumannNeighborhood: Seq[Pos] = Seq((-1, 0), (1, 0), (0, -1), (0, 1))
+  val mooreNeighborhood: Seq[Pos] = vonNeumannNeighborhood ++ Seq((-1, -1), (-1, 1), (1, -1), (1, 1))
 
-  def manhattan(p: (Int, Int), q: (Int, Int)): Int = {
+  def manhattan(p: Pos, q: Pos): Int = {
     Math.abs(p._1 - q._1) + Math.abs(p._2 - q._2)
   }
 
   def manhattan(x: Int, y: Int, x1: Int, y1: Int): Int =
     manhattan((x, y), (x1, y1))
 
-  def parseMap(lines: Array[String]): Map[(Int, Int), Char] = {
-    (for {
-      i <- lines.indices
-      j <- lines.head.indices
-    } yield (i, j) -> lines(i)(j)).toMap.withDefaultValue('.')
-  }
+  type Pos = (Int, Int)
+
+  extension (c: Pos)
+    def +(o: Pos): Pos = (c.x + o.x, c.y + o.y)
+    def +(d: Dir): Pos = move(d, 1)
+    def move(d: Dir, step: Int): Pos = (c.x + d.x * step, c.y + d.y * step)
+    def x: Int = c._1
+    def y: Int = c._2
+
+  final case class Dir private(x: Int, y: Int):
+    def clockwise: Dir = Dir(-y, x)
+
+  object Dir:
+    final val UP: Dir = Dir(0, -1)
+    final val DOWN: Dir = Dir(0, 1)
+    final val LEFT: Dir = Dir(-1, 0)
+    final val RIGHT: Dir = Dir(1, 0)
 }

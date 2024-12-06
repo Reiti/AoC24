@@ -1,4 +1,5 @@
 import util.{Day, Util}
+import util.Util._
 
 object Day4 extends Day(4):
   override def solve(): Unit =
@@ -10,13 +11,13 @@ object Day4 extends Day(4):
     //Part 2
     println(inputMap.keys.count(k => isX(inputMap.withDefaultValue(' '), k)))
 
-  def extract(map: Map[(Int, Int), Char], pattern: List[(Int, Int)], start: (Int, Int)): String =
-    pattern.map(pos => map((start._1 + pos._1, start._2 + pos._2))).mkString
+  def extract(map: Map[Pos, Char], pattern: List[Pos], start: Pos): String =
+    pattern.map(pos => map(start + pos)).mkString
 
-  def diag1: List[(Int, Int)] = List((1, 1), (0, 0), (-1, -1))
-  def diag2: List[(Int, Int)] = List((-1, 1), (0, 0), (1, -1))
+  def diag1: List[Pos] = List((1, 1), (0, 0), (-1, -1))
+  def diag2: List[Pos] = List((-1, 1), (0, 0), (1, -1))
 
-  def isX(map: Map[(Int, Int), Char], pos: (Int, Int)): Boolean =
+  def isX(map: Map[Pos, Char], pos: Pos): Boolean =
     val d1 = extract(map, diag1, pos)
     val d2 = extract(map, diag2, pos)
 
