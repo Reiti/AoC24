@@ -138,6 +138,8 @@ object Util {
   type Pos = (Int, Int)
 
   extension (c: Pos)
+    def *(s: Int): Pos = (c.x * s, c.y * s)
+    def -(o: Pos): Pos = (c.x - o.x, c.y - o.y)
     def +(o: Pos): Pos = (c.x + o.x, c.y + o.y)
     def +(d: Dir): Pos = move(d, 1)
     def move(d: Dir, step: Int): Pos = (c.x + d.x * step, c.y + d.y * step)
