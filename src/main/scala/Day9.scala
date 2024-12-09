@@ -1,7 +1,6 @@
 import util.Day
 
 import scala.annotation.tailrec
-import scala.annotation.unchecked.uncheckedVariance
 
 object Day9 extends Day(9):
   sealed trait Region
@@ -38,7 +37,7 @@ object Day9 extends Day(9):
 
   def createPatch(free: Free, file: File): List[Region] = List(File(file.size, file.id), Free(free.size - file.size))
 
-  def findFree(regions: Vector[Region], curr: File): Option[(Free, Int)] = regions.zipWithIndex.collectFirst { case (f: Free, idx: Int) if f.size >= curr.size => (f, idx)}
+  def findFree(regions: Vector[Region], curr: File): Option[(Free, Int)] = regions.zipWithIndex.collectFirst{ case (f: Free, idx: Int) if f.size >= curr.size => (f, idx) }
 
   @tailrec
   def checksum(regions: Vector[Region], idx: Int = 0, acc: Long = 0L): Long = regions match
