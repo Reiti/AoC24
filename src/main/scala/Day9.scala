@@ -36,7 +36,7 @@ object Day9 extends Day(9):
       case None => compactFiles(beginning, last +: done, moved + last.id)
     case _ => done
 
-  def createPatch(free: Free, file: File): List[Region] = List(File(file.size, file.id), Free(free.size -file.size))
+  def createPatch(free: Free, file: File): List[Region] = List(File(file.size, file.id), Free(free.size - file.size))
 
   def findFree(regions: Vector[Region], curr: File): Option[(Free, Int)] = regions.zipWithIndex.collectFirst { case (f: Free, idx: Int) if f.size >= curr.size => (f, idx)}
 
