@@ -1,51 +1,47 @@
 import util.Day
 
 import scala.annotation.tailrec
+import scala.annotation.unchecked.uncheckedVariance
 
 object Day9 extends Day(9):
-  override def solve(): Unit =
-    val padded = input.padTo(input.length + 1, '0')
-    val withIds = padded.grouped(2).map(s => (s.head.asDigit, s(1).asDigit)).zipWithIndex.toList
+  sealed trait Region
+  sealed case class Free(size: Int) extends Region
+  sealed case class File(size: Int, id: Int) extends Region
 
-    val asDisk = withIds.flatMap(e => List.fill(e._1._1)(e._2.toString) ++ List.fill(e._1._2)("."))
+  override def solve(): Unit =
+    val regions = input.grouped(2).zipWithIndex.flatMap((l, i) => List(File(l.head.asDigit, i), Free(l.lastOption.map(_.asDigit).getOrElse(0)))).toVector
 
     //Part 1
-    println(compactBlocks(asDisk, asDisk.length - 1).zipWithIndex.map((v, i) => if v == "." then 0 else v.toLong*i).sum)
-
-    val withFree = withIds.flatMap(e => List((e._1._1, e._2), (e._1._2, -1)))
+    println(checksum(compactBlocks(regions)))
 
     //Part 2
-    println(compactFiles(withFree, withFree.map(_._2).filterNot(_ == -1).reverse).flatMap(e => if e._2 == -1 then List.fill(e._1)(".") else List.fill(e._1)(e._2.toString)).zipWithIndex.map((v, i) => if v == "." then 0 else v.toLong*i).sum)
+    println(checksum(compactFiles(regions)))
 
   @tailrec
-  def compactBlocks(disk: List[String], cursor: Int): List[String] =
-    if disk(cursor) == "." then
-      compactBlocks(disk, cursor - 1)
-    else
-      findFreeBlock(disk, cursor) match
-        case Some(idx) => compactBlocks(disk.patch(idx, List(disk(cursor)), 1).patch(cursor, List("."), 1), cursor - 1)
-        case None => disk
-
-  def findFreeBlock(disk: List[String], cursor: Int): Option[Int] =
-    disk.zipWithIndex.find(e => e._2 < cursor && e._1.equals(".")).map(_._2)
+  def compactBlocks(regions: Vector[Region], done: Vector[Region] = Vector()): Vector[Region] = regions match
+    case beginning :+ Free(_) => compactBlocks(beginning, done)
+    case (x: File) +: tail => compactBlocks(tail, done :+ x)
+    case (head: Free) +: mid :+ (last: File) =>
+      if head.size == last.size then compactBlocks(mid, done :+ last)
+      else if head.size < last.size then compactBlocks(mid :+ File(last.size - head.size, last.id), done :+ File(head.size, last.id))
+      else compactBlocks(Free(head.size - last.size) +: mid, done :+ File(last.size, last.id))
+    case _ => done
 
   @tailrec
-  def compactFiles(disk: List[(Int, Int)], ids: List[Int]): List[(Int, Int)] = ids match
-    case x :: xs =>
-      val curr = disk.find(_._2 == x).get
-      val idx = disk.indexOf(curr)
-      findFreeFile(disk, idx, curr._1) match
-        case Some(i) =>
-          val (free, _) = disk(i)
-          val moved = if curr._1 - free != 0 then disk.patch(i, List((curr._1, curr._2), (free - curr._1, -1)), 1) else disk.patch(i, List((curr._1, curr._2)), 1)
-          val toRemove = moved.lastIndexOf(curr)
-          val removed = moved.patch(toRemove, List((curr._1, -1)), 1)
-          compactFiles(removed, xs)
-        case None =>
-          compactFiles(disk, xs)
+  def compactFiles(regions: Vector[Region], done: Vector[Region] = Vector(), moved: Set[Int] = Set()): Vector[Region] = regions match
+    case beginning :+ (last: Free) => compactFiles(beginning, last +: done, moved)
+    case beginning :+ (last: File) if moved.contains(last.id) => compactFiles(beginning, last +: done, moved)
+    case beginning :+ (last: File) => findFree(beginning, last) match
+      case Some((free, idx)) => compactFiles(beginning.patch(idx, createPatch(free, last), 1) :+ Free(last.size), done, moved + last.id)
+      case None => compactFiles(beginning, last +: done, moved + last.id)
+    case _ => done
 
-    case _ => disk
+  def createPatch(free: Free, file: File): List[Region] = List(File(file.size, file.id), Free(free.size -file.size))
 
-  def findFreeFile(disk: List[(Int, Int)], idx: Int, size: Int): Option[Int] =
-    val found = disk.zipWithIndex.find(e => e._2 < idx && e._1._2 == -1 && e._1._1 >= size).map(_._1)
-    found.map(f => disk.indexOf(f))
+  def findFree(regions: Vector[Region], curr: File): Option[(Free, Int)] = regions.zipWithIndex.collectFirst { case (f: Free, idx: Int) if f.size >= curr.size => (f, idx)}
+
+  @tailrec
+  def checksum(regions: Vector[Region], idx: Int = 0, acc: Long = 0L): Long = regions match
+    case Free(size) +: xs => checksum(xs, idx + size, acc)
+    case File(size, id) +: xs => checksum(xs, idx + size, acc + idx.until(idx + size).map(i => i.toLong*id).sum)
+    case _ => acc
