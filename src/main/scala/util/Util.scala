@@ -135,6 +135,10 @@ object Util {
   def manhattan(x: Int, y: Int, x1: Int, y1: Int): Int =
     manhattan((x, y), (x1, y1))
 
+  def ints(x: String): Seq[Int] = raw"\d+".r.findAllIn(x).map(_.toInt).toSeq
+
+  def longs(x: String): Seq[Long] = raw"\d+".r.findAllIn(x).map(_.toLong).toSeq
+
   type Pos = (Int, Int)
 
   extension (c: Pos)
