@@ -135,9 +135,11 @@ object Util {
   def manhattan(x: Int, y: Int, x1: Int, y1: Int): Int =
     manhattan((x, y), (x1, y1))
 
-  def ints(x: String): Seq[Int] = raw"\d+".r.findAllIn(x).map(_.toInt).toSeq
+  def ints(x: String): Seq[Int] = raw"-?\d+".r.findAllIn(x).map(_.toInt).toSeq
 
-  def longs(x: String): Seq[Long] = raw"\d+".r.findAllIn(x).map(_.toLong).toSeq
+  def longs(x: String): Seq[Long] = raw"-?\d+".r.findAllIn(x).map(_.toLong).toSeq
+  
+  type Vel = (Int, Int)
 
   type Pos = (Int, Int)
 
@@ -145,6 +147,7 @@ object Util {
     def *(s: Int): Pos = (c.x * s, c.y * s)
     def -(o: Pos): Pos = (c.x - o.x, c.y - o.y)
     def +(o: Pos): Pos = (c.x + o.x, c.y + o.y)
+    def %(o: (Int, Int)): Pos = (Math.floorMod(c.x, o._1), Math.floorMod(c.y, o._2))
     def +(d: Dir): Pos = move(d, 1)
     def move(d: Dir, step: Int): Pos = (c.x + d.x * step, c.y + d.y * step)
     def x: Int = c._1
