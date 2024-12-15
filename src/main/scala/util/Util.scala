@@ -26,17 +26,10 @@ object Util {
 
   def loadDayLines(day: Int): List[String] = loadDay(day).split("\n").toList
 
-//  object Dir:
-//    def UP: (Int, Int) = (0, -1)
-//    def DOWN: (Int, Int) = Dir((0, 1)
-//    def LEFT: (Int, Int) = Dir((-1, 0)
-//    def RIGHT: (Int, Int) = Dir((1, 0)
-//
-//    def clockwise: Dir =
-//      Dir.((-d._2, d._1))
-//
-//    def x: Int = d._1
-//    def y: Int = d._2
+  def parseMap(lines: Seq[String]): Map[Pos, Char] =
+    lines.indices.flatMap(row => lines.head.indices.map(col => {
+      (col, row) -> lines(row)(col)
+    })).toMap
 
   @tailrec
   def gcd(a: Long, b: Long): Long = {
@@ -143,18 +136,22 @@ object Util {
 
   type Pos = (Int, Int)
 
+  type Grid = Map[Pos, Char]
+
   extension (c: Pos)
     def *(s: Int): Pos = (c.x * s, c.y * s)
     def -(o: Pos): Pos = (c.x - o.x, c.y - o.y)
     def +(o: Pos): Pos = (c.x + o.x, c.y + o.y)
     def %(o: (Int, Int)): Pos = (Math.floorMod(c.x, o._1), Math.floorMod(c.y, o._2))
     def +(d: Dir): Pos = move(d, 1)
+    def -(d: Dir): Pos = move(d.reverse, 1)
     def move(d: Dir, step: Int): Pos = (c.x + d.x * step, c.y + d.y * step)
     def x: Int = c._1
     def y: Int = c._2
 
   final case class Dir private(x: Int, y: Int):
     def clockwise: Dir = Dir(-y, x)
+    def reverse: Dir = Dir(-x, -y)
 
   object Dir:
     final val UP: Dir = Dir(0, -1)
