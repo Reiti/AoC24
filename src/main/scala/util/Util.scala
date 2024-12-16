@@ -151,6 +151,7 @@ object Util {
 
   final case class Dir private(x: Int, y: Int):
     def clockwise: Dir = Dir(-y, x)
+    def counterclockwise: Dir = Dir(y, -x)
     def reverse: Dir = Dir(-x, -y)
 
   object Dir:

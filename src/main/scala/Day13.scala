@@ -9,8 +9,7 @@ object Day13 extends Day(13):
 
     //Part 2
     println(machines.map{case Array(a, b, price) => Array(a, b, (price._1 + 10000000000000L, price._2 + 10000000000000L))}.flatMap(tokenCost).sum)
-
-
+  
   def countPresses(a: (Long, Long), b: (Long, Long), price: (Long, Long)): Option[(Long, Long)] =
     val bp = (a._1 * price._2 - a._2 * price._1).toDouble / (a._1 * b._2 - a._2 * b._1).toDouble
     val ap = (price._1 - b._1 * bp) / a._1
