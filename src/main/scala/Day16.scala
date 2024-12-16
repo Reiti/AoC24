@@ -1,8 +1,6 @@
 import util.{Day, Util}
 import util.Util.*
 
-import scala.annotation.tailrec
-
 object Day16 extends Day(16):
   type State = (Pos, Dir)
 
