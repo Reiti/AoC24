@@ -138,7 +138,7 @@ object Util {
 
   def allPaths[B](node: B, prev: Map[B, Set[B]]): List[List[B]] = prev.get(node) match
     case Some(nodes) =>
-      nodes.toList.flatMap(n => allPaths(n, prev)).map(p => p.prepended(node))
+      nodes.toList.flatMap(n => allPaths(n, prev)).map(p => p.appended(node))
     case None =>
       List(List(node))
 
